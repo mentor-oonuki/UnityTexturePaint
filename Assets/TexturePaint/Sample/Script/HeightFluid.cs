@@ -5,7 +5,7 @@ namespace Es.TexturePaint.Sample
 	[RequireComponent(typeof(DynamicCanvas), typeof(Renderer))]
 	public class HeightFluid : MonoBehaviour
 	{
-		private const int CREATE_TEXTURE_SIZE = 1024;
+		private const int CREATE_TEXTURE_SIZE = 512;
 
 		private Material heightFluid;
 		private Material height2Normal;
@@ -45,7 +45,7 @@ namespace Es.TexturePaint.Sample
 
 		private void Awake()
 		{
-			heightFluid = Resources.Load<Material>("Es.TexturePaint.Fluid.HeightSimpleStretch");
+			heightFluid = Resources.Load<Material>("Es.TexturePaint.Fluid.HeightDrip");
 			height2Normal = Resources.Load<Material>("Es.TexturePaint.Fluid.HeightToNormal");
 			height2Color = Resources.Load<Material>("Es.TexturePaint.Fluid.HeightToColor");
 			singleColorFill = Resources.Load<Material>("Es.TexturePaint.Fluid.SingleColorFill");
@@ -75,6 +75,8 @@ namespace Es.TexturePaint.Sample
 			heightFluid.SetFloat("_ScaleFactor", flowingForce);
 			heightFluid.SetFloat("_Viscosity", viscosity);
 			heightFluid.SetVector("_FlowDirection", flowDirection.normalized);
+			if(canvas.GetNormalTexture(materialName) != null)
+				heightFluid.SetTexture("_NormalMap", canvas.GetNormalTexture(materialName));
 			Graphics.Blit(heightPaint, heightTmp, heightFluid);
 			Graphics.Blit(heightTmp, heightPaint);
 			RenderTexture.ReleaseTemporary(heightTmp);
