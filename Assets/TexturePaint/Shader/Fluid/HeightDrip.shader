@@ -59,24 +59,22 @@
 				float4 col = tex2D(_MainTex, i.uv);
 
 				float3 normal = normalize(UnpackNormal(tex2D(_NormalMap, i.uv)).xyz);
-				float VITIATE_Z = pow(normal.b, 2);
-				float VITIATE_X = 0.1 * rand(float3(i.uv.xy, i.uv.x + i.uv.y)) * (1 + normal.b * 30);//どのくらい横の液体を考慮するかの係数
+				float VITIATE_Z = pow(normal.b, 2) - normal.y * 0.2;
+				float VITIATE_X = 0.1 * rand(float3(i.uv.xy, i.uv.x + i.uv.y)) * (1 + normal.b * 30);
+
 				float2 shiftZ = float2(_FlowDirection.x * _MainTex_TexelSize.x, _FlowDirection.y * _MainTex_TexelSize.y) * _ScaleFactor * _Viscosity * VITIATE_Z;
 				float2 shiftX = float2(_MainTex_TexelSize.x * _FlowDirection.y, _MainTex_TexelSize.y * _FlowDirection.x) * _ScaleFactor * _Viscosity * VITIATE_X;
-				float2 shiftz = -shiftZ;
 				float2 shiftx = -shiftX;
 
-				//TODO:直下の高さを取ってきて、その高さに応じてどの程度流れるかを決めたい
 				float4 texZ = tex2D(_MainTex, clamp(i.uv.xy + shiftZ, 0, 1));
 				float4 texx = tex2D(_MainTex, clamp(i.uv.xy + shiftx + shiftZ, 0, 1));
 				float4 texX = tex2D(_MainTex, clamp(i.uv.xy + shiftX + shiftZ, 0, 1));
 
-				//ピクセルの液体付着量を計算
-				float amountUp = (texZ.a + texx.a + texX.a) * 0.3333;//上にある液体の付着量(重みは直上優先)
+				float amountUp = (texZ.a + texx.a + texX.a) * 0.3333;
 
 				//上のピクセルが塗られていた場合、垂れてくると仮定して加算
 				if (amountUp > (1 - _Viscosity)) {
-					//TODO:色合成のアルゴリズム変更(maxだと明るくなる・・・)
+					//TODO:色合成のアルゴリズム変更(減法混色)
 					//垂れてきた液体を加算した合計の液体付着量
 					float resultAmount = (col.a + amountUp) * 0.5;
 					//垂れた液体の色を計算

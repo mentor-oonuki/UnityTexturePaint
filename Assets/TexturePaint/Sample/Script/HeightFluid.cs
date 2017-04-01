@@ -5,7 +5,7 @@ namespace Es.TexturePaint.Sample
 	[RequireComponent(typeof(DynamicCanvas), typeof(Renderer))]
 	public class HeightFluid : MonoBehaviour
 	{
-		private const int CREATE_TEXTURE_SIZE = 512;
+		private const int CREATE_TEXTURE_SIZE = 1024;
 
 		private Material heightFluid;
 		private Material height2Normal;
@@ -21,8 +21,8 @@ namespace Es.TexturePaint.Sample
 		[SerializeField]
 		private float flowingForce = 1;
 
-		[SerializeField, Range(0.01f, 1f)]
-		private float viscosity = 0.1f;
+		[SerializeField, Range(0.1f, 3f)]
+		private float viscosity = 0.9f;
 
 		[SerializeField]
 		private float normalScaleFactor = 1;
@@ -49,10 +49,6 @@ namespace Es.TexturePaint.Sample
 			height2Normal = Resources.Load<Material>("Es.TexturePaint.Fluid.HeightToNormal");
 			height2Color = Resources.Load<Material>("Es.TexturePaint.Fluid.HeightToColor");
 			singleColorFill = Resources.Load<Material>("Es.TexturePaint.Fluid.SingleColorFill");
-		}
-
-		private void Start()
-		{
 			material = GetComponent<Renderer>().sharedMaterial;
 			materialName = material.name;
 
